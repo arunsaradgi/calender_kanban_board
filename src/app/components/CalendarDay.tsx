@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { format, addDays, subDays, startOfWeek, eachDayOfInterval } from "date-fns";
+import { format, addDays, startOfWeek, eachDayOfInterval } from "date-fns";
 import { Event } from "@/types/types";
 import EventCard from "./EventCard";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
@@ -17,7 +17,7 @@ const CalendarDay: React.FC<CalendarDayProps> = ({ selectedDate, events, onEvent
     const containerRef = useRef<HTMLDivElement>(null);
 
     const handleDragEnd = (result: DropResult) => {
-        const { source, destination } = result;
+        const { destination } = result;
         if (!destination) return;
 
         const eventId = result.draggableId;
