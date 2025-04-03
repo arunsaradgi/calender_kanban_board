@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { format, addDays, startOfWeek, eachDayOfInterval } from "date-fns";
+import { format, addDays,subDays, startOfWeek, eachDayOfInterval } from "date-fns";
 import { Event } from "@/types/types";
 import EventCard from "./EventCard";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
