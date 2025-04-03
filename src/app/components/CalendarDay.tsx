@@ -15,6 +15,8 @@ interface CalendarDayProps {
 
 const CalendarDay: React.FC<CalendarDayProps> = ({ selectedDate, events, onEventDrop, onDateChange }) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const touchStartX = useRef<number>(0);
+    const touchEndX = useRef<number>(0);
 
     const handleDragEnd = (result: DropResult) => {
         const { source, destination } = result;
@@ -33,9 +35,30 @@ const CalendarDay: React.FC<CalendarDayProps> = ({ selectedDate, events, onEvent
     const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 });
     const weekDays = eachDayOfInterval({ start: weekStart, end: addDays(weekStart, 6) });
 
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        touchStartX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        touchEndX.current = e.changedTouches[0].clientX;
+        const swipeDistance = touchStartX.current - touchEndX.current;
+
+        if (swipeDistance > 50) {
+            onDateChange(addDays(selectedDate, 1));
+        } else if (swipeDistance < -50) {
+            onDateChange(subDays(selectedDate, 1));
+        }
+    };
+
     return (
-        <div className="p-4" ref={containerRef}>
-            <div className="flex gap-1 justify-between mb-4 ">
+        <div
+            className="p-4 min-h-screen"
+            ref={containerRef}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+        >
+            <div className="flex gap-1 justify-between mb-4">
                 {weekDays.map((day) => (
                     <button
                         key={day.toString()}
@@ -45,7 +68,6 @@ const CalendarDay: React.FC<CalendarDayProps> = ({ selectedDate, events, onEvent
                             }`}
                         onClick={() => onDateChange(day)}
                     >
-
                         {format(day, "EEE d")}
                     </button>
                 ))}
@@ -56,7 +78,6 @@ const CalendarDay: React.FC<CalendarDayProps> = ({ selectedDate, events, onEvent
                 <Droppable droppableId={format(selectedDate, "yyyy-MM-dd")}>
                     {(provided) => (
                         <div {...provided.droppableProps} ref={provided.innerRef}>
-
                             {sortedEvents.map((event, index) => (
                                 <Draggable key={event.id} draggableId={event.id} index={index}>
                                     {(provided) => (
